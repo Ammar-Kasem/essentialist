@@ -10,6 +10,7 @@ require (
 	github.com/Xuanwo/go-locale v1.1.3
 	github.com/fatih/color v1.19.0
 	github.com/gizak/termui/v3 v3.1.0
+	github.com/gomarkdown/markdown v0.0.0-20260417124207-7d523f7318df
 	github.com/nicksnyder/go-i18n/v2 v2.6.1
 	github.com/open-spaced-repetition/go-fsrs v1.2.1
 	github.com/stretchr/testify v1.11.1
@@ -42,7 +43,6 @@ require (
 	github.com/go-text/typesetting v0.3.4 // indirect
 	github.com/godbus/dbus/v5 v5.2.2 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
-	github.com/gomarkdown/markdown v0.0.0-20260417124207-7d523f7318df // indirect
 	github.com/hack-pad/go-indexeddb v0.3.2 // indirect
 	github.com/hack-pad/safejs v0.1.1 // indirect
 	github.com/jeandeaual/go-locale v0.0.0-20250612000132-0ef82f21eade // indirect

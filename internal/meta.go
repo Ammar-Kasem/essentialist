@@ -5,6 +5,7 @@ import (
 	"errors"
 	"hash/fnv"
 	"io"
+	"regexp"
 	"strings"
 	"time"
 
@@ -126,12 +127,13 @@ func strip(s string) string {
 	return result.String()
 }
 
-// Hash returns a hash value to index the question. Computed hash is loosy
-// since it ignore non alpha numerical values in order to ignore typos
-// correction.
+var questionLineBreaks = regexp.MustCompile(`(?i)<br(?: ?/)?>`)
+
+// Hash ignores supported HTML line breaks as well as punctuation and spacing.
 func Hash(card Card) Digest {
+	question := questionLineBreaks.ReplaceAllString(card.Question, "")
 	h := fnv.New64()
-	h.Write([]byte(strip(card.Question)))
+	h.Write([]byte(strip(question)))
 	return Digest(h.Sum64())
 }
 

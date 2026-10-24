@@ -73,6 +73,28 @@ func TestHash(t *testing.T) {
 	}
 }
 
+func TestHashIgnoresLineBreakTags(t *testing.T) {
+	want := Hash(Card{Question: "Label Question text"})
+	for _, question := range []string{
+		"Label<br>Question text",
+		"Label<br/>Question text",
+		"Label<br />Question text",
+		"Label<BR>Question text",
+		"Label<Br />Question text",
+		"Label<br>Question<br />text",
+		"<br>Label Question text<br/>",
+	} {
+		t.Run(question, func(t *testing.T) {
+			if got := Hash(Card{Question: question}); got != want {
+				t.Errorf("hash = %v, want %v", got, want)
+			}
+		})
+	}
+	if Hash(Card{Question: "Label br Question text"}) == want {
+		t.Error("literal letters br must still affect the hash")
+	}
+}
+
 func TestMetaReview(t *testing.T) {
 	var card Card
 	meta := NewMeta(card)

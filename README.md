@@ -178,6 +178,21 @@ Usage:
 flashdown [-a] [-g <algorithm>] [-n <number of cards>] <deck_file> [<deck_file> ...]
 ```
 
+To force a line break in a Flashdown question, insert `<br>` (or `<br/>` or
+`<br />`) while keeping the heading on one source line:
+
+```markdown
+## [Val av preposition · MIC-W09]<br>Fyll i prepositionen: ”Jag litar … dig.”
+
+på
+```
+
+Flashdown displays the label and question on separate lines. These tags also
+work in answers; tags inside code remain literal text.
+
+Question hashes ignore these break tags, including uppercase variants, so
+adding, removing, or moving them does not change the card's hash.
+
 ![Screenshot](docs/flashdown-screenshot.png)
 
 Similar project: <https://github.com/Yvee1/hascard>.

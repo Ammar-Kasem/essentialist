@@ -5,8 +5,6 @@ import (
 
 	"github.com/fatih/color"
 	ui "github.com/gizak/termui/v3"
-
-	markdown "github.com/MichaelMure/go-term-markdown"
 )
 
 type MarkdownArea struct {
@@ -86,7 +84,7 @@ func (self *MarkdownArea) Draw(buf *ui.Buffer) {
 	self.Block.Draw(buf)
 
 	color.NoColor = true
-	output := markdown.Render(self.Text, self.Inner.Dx(), 0)
+	output := renderMarkdown(self.Text, self.Inner.Dx())
 	text := string(output)
 
 	cells := ui.ParseStyles(text, self.TextStyle)
