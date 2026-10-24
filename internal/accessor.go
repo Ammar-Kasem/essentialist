@@ -5,6 +5,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 )
 
 // DeckAccessor abstract IO operations around Deck handling.
@@ -30,7 +31,7 @@ func (f *fileAccessor) Path() string {
 
 func (f *fileAccessor) metaFile() string {
 	base := filepath.Base(f.filename)
-	base = "." + base + ".db"
+	base = strings.TrimSuffix(base, ".md") + ".json"
 	dir := filepath.Dir(f.filename)
 	return filepath.Join(dir, base)
 }

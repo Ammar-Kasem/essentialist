@@ -52,7 +52,9 @@ Each deck of cards is a plain text Markdown file with the extension `.md` (ex:
 Each card starts with a heading level 2 (line starting with `##`) defining the
 question. The answer is the content following (until the next heading level 2).
 
-Your progress is stored in a hidden file `.<deck file>.db` (ex: `.sample.md.db`).
+Your progress is stored as JSON beside the deck: `sample.md` uses `sample.json`.
+To keep progress from an older version, rename `.sample.md.db` to `sample.json`
+before opening that deck.
 
 Example of a deck with 3 cards:
 

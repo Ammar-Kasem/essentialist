@@ -1,3 +1,4 @@
 *.db
+/internal/samples/**/*.json
 /flashdown
 /flashdown.exe
