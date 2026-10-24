@@ -1,145 +1,52 @@
 name: Build Artifacts
 
-on: workflow_call
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: Git ref to build
+        required: false
+        type: string
 
 permissions:
   contents: read
-  packages: write
 
 jobs:
-
-  build-for-linux:
+  build:
     runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-go@v5
-      with:
-        go-version: 'stable'
-
-    - name: Update package definition
-      run: sudo apt-get update
-
-    - name: Install X11 headers
-      run: sudo apt-get install -y libgl1-mesa-dev xorg-dev
-
-    - name: Build essentialist
-      run: go build -o ./essentialist-linux ./cmd/essentialist
-
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: Essentialist for Linux (amd64)
-        path: ./essentialist-linux
-
-  build-for-flatpak:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Install flatpak
-      run: sudo apt-get install -y flatpak flatpak-builder
-
-    - name: Configure flatpak repo
-      run: sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-
-    - name: Install org.freedesktop.Sdk
-      run: sudo flatpak install -y org.freedesktop.Sdk/x86_64/25.08
-
-    - name: Install org.freedesktop.Platform
-      run: sudo flatpak install -y org.freedesktop.Platform/x86_64/25.08
-
-    - name: Install org.freedesktop.Sdk.Extension.golang
-      run: sudo flatpak install -y org.freedesktop.Sdk.Extension.golang/x86_64/25.08
-
-    - name: Build flatpak
-      run: make flatpak
-
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: Essentialist for Linux (flatpak)
-        path: ./essentialist.flatpak
-
-  build-for-android:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v4
-    - uses: nttld/setup-ndk@v1
-      id: setup-ndk
-      with:
-        ndk-version: r27
-        add-to-path: false
-    - uses: actions/setup-go@v5
-      with:
-        go-version: 'stable'
-
-    - name: Install fyne
-      run: go install fyne.io/tools/cmd/fyne@latest
-
-    - name: Build essentialist
-      run: cd cmd/essentialist && ~/go/bin/fyne package -os android && cp Essentialist.apk ../.. && cd -
-      env:
-        ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
-
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: Essentialist for Android (APK)
-        path: ./Essentialist.apk
-
-  build-for-mac-os:
-    runs-on: macos-latest
+    strategy:
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+            binary: flashdown-linux-amd64
+          - goos: linux
+            goarch: arm64
+            binary: flashdown-linux-arm64
+          - goos: darwin
+            goarch: amd64
+            binary: flashdown-macos-amd64
+          - goos: darwin
+            goarch: arm64
+            binary: flashdown-macos-arm64
+          - goos: windows
+            goarch: amd64
+            binary: flashdown-windows-amd64.exe
+    env:
+      CGO_ENABLED: '0'
+      GOOS: ${{ matrix.goos }}
+      GOARCH: ${{ matrix.goarch }}
     steps:
       - uses: actions/checkout@v4
-
+        with:
+          ref: ${{ inputs.ref || github.ref }}
       - uses: actions/setup-go@v5
         with:
-          go-version: 'stable'
-
-      - name: Install fyne
-        run: go install fyne.io/tools/cmd/fyne@latest
-
-      - name: Install create-dmg
-        run: brew install create-dmg
-
-      - name: Build essentialist
-        run: cd cmd/essentialist && ~/go/bin/fyne package -os darwin
-
-      - name: Create DMG
-        run: |
-          create-dmg \
-            --volname "Essentialist" \
-            --window-pos 200 120 \
-            --window-size 800 400 \
-            --icon-size 100 \
-            --icon "Essentialist.app" 200 190 \
-            --hide-extension "Essentialist.app" \
-            --app-drop-link 600 185 \
-            "Essentialist.dmg" \
-            "cmd/essentialist/Essentialist.app"
-
+          go-version-file: go.mod
+      - name: Build Flashdown
+        run: go build -trimpath -o "${{ matrix.binary }}" ./cmd/flashdown
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Essentialist for MacOS
-          path: ./Essentialist.dmg
-
-  build-for-windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: 'stable'
-
-      - name: Build essentialist
-        run: go build -x -o essentialist.exe ./cmd/essentialist
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: Essentialist for Windows (x64)
-          path: ./essentialist.exe
+          name: ${{ matrix.binary }}
+          path: ${{ matrix.binary }}

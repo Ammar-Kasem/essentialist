@@ -25,13 +25,13 @@ Flags:
 	-n | --number : set the number of cards used.
 	-d | --debug  : debug logs are written to a temprorary file.
 
-A deck is a plain text Markdown file where questions have heading level 1 like:
+A deck is a plain text Markdown file where questions have heading level 2 like:
 
-    # Question 1
+    ## Question 1
 
     Answer 1
 
-    # Question 2
+    ## Question 2
 
     Answer 2
 

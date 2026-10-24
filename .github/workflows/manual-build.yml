@@ -4,9 +4,7 @@ on: workflow_dispatch
 
 permissions:
   contents: read
-  packages: write
 
 jobs:
   build-artifacts:
     uses: ./.github/workflows/build-artifacts.yml
-    secrets: inherit

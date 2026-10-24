@@ -9,6 +9,6 @@ Wide characters retain the upstream wrapping behavior. Upstream Go source and
 tests are included, along with Unicode word wrapping regressions in
 `unicode_wrap_test.go`.
 
-Two variation-selector width expectations in `len_test.go` are updated for
-go-runewidth v0.0.23, which the root module already uses. Other upstream files
-are unchanged.
+Two variation-selector width expectations in `len_test.go` match the root
+module's selected go-runewidth version, which treats variation selectors as
+zero width. Other upstream files are unchanged.

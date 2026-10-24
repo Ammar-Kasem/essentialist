@@ -1,35 +1,58 @@
-# Essentialist
+# Flashdown
 
+A terminal application for [spaced repetition][1] using flashcards written in
+[Markdown][2]. Review scheduling uses [FSRS][3]. This fork of
+[Essentialist](https://github.com/essentialist-app/essentialist) focuses on Flashdown.
 
-Programs for [spaced repetition][1] using flashcards in [Markdown][2].
-
-- **Essentialist**: Application for desktops (Windows, MacOS and Linux) and mobile (Android)
-- **Flashdown**: Terminal user interface
-
-The space repetition algorithm is [FSRS][3].
-
-Key features:
-
-- **Privacy**: No network access, your data never leave your device.
-- **Easy card creation**: Flash cards are plain text Markdown files.
-- **Cross-platform**: Runs on Linux, MacOS, Windows and android.
+- Flashcards are plain text Markdown files.
+- Review history is stored locally alongside each deck.
+- Runs in a terminal on Linux, macOS, and Windows.
 
 [1]: https://en.wikipedia.org/wiki/Spaced_repetition
 [2]: https://en.wikipedia.org/wiki/Markdown
 [3]: https://github.com/open-spaced-repetition/fsrs4anki
 
-See the [CONTRIBUTING.md](/.github/CONTRIBUTING.md) for how to report bugs and
-submit pull request.
+See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for contribution guidelines.
+
+## Build and install
+
+Requires Go 1.26 or newer. From this checkout, build with:
+
+```shell
+make
+```
+
+Install into Go's binary directory (normally `~/go/bin`):
+
+```shell
+go install ./cmd/flashdown
+```
+
+Alternatively, install the built binary with the Makefile:
+
+```shell
+make install PREFIX="$HOME/.local"
+```
+
+## Usage
+
+```shell
+flashdown [-a] [-n <number of cards>] <file or directory> [<file> ...]
+```
+
+Run `flashdown --help` for available options. Press Space or Enter to reveal an
+answer, then rate it with 1 (Again), 2 (Hard), 3 (Good), or 4 (Easy). Press `s` to
+skip, `w` to save, or `q` to save and quit.
 
 ## Flash cards syntax
 
-Each deck of cards is a plain text Markdown files with the extension `.md` (ex:
+Each deck of cards is a plain text Markdown file with the extension `.md` (ex:
 `sample.md`). You can put all your decks in the same directory.
 
 Each card starts with a heading level 2 (line starting with `##`) defining the
 question. The answer is the content following (until the next heading level 2).
 
-You progress is stored in a hidden file `.<deck file>.db` (ex: `.sample.md.db`).
+Your progress is stored in a hidden file `.<deck file>.db` (ex: `.sample.md.db`).
 
 Example of a deck with 3 cards:
 
@@ -55,129 +78,6 @@ Answer with a table.
 | 124 | 456 |
 ```
 
-### Math (KaTeX/LaTeX) support
-
-Essentialist has basic support for math rendering using standard LaTeX syntax. You can write inline math wrapped in single dollars `$...$` (e.g. `$\pi = \frac{c}{d}$`) or block math wrapped in double dollars `$$...$$` on its own line:
-
-```
-$$
-\sum_{i=1}^{\infty} \frac{1}{n^2} = \frac{\pi^2}{6}
-$$
-```
-
-> [!WARNING]
-> Math typesetting support is currently primitive. Many complex KaTeX/LaTeX functions and environments do not work yet. Bug reports and contributions are welcome.
-
-## Essentialist (GUI)
-
-A GUI version for desktops and mobile (Android, iOS support isn't tested).
-
-![Screenshot](docs/essentialist-screenshot.png)
-
-### Installation
-
-[Download the latest version](https://github.com/essentialist-app/essentialist/releases)
-or compile it with the following instructions:
-
-<details><summary>Linux</summary>
-<p>
-
-In order to build Essentialist, install the following dependencies
-(Debian/Ubuntu):
-
-```
-sudo apt-get install libxrandr-dev libxcursor-dev libglx-dev libxi-dev libgl-dev libxxf86vm-dev
-```
-
-The simplest way to build and install Essentialist with its desktop launcher
-and icon on Linux is to use the Makefile like:
-
-```
-make install DESTDIR=$HOME/.local PREFIX=""
-```
-
-Essentialist [does not support](https://github.com/fyne-io/fyne/issues/5471)
-Xorg and Wayland at the same time. By default, Xorg is enabled. If you want to
-enable Wayland support, run:
-
-```shell
-make install DESTDIR=$HOME/.local PREFIX="" WAYLAND=true
-```
-
-You can also simply build the binary with:
-
-```
-go build ./cmd/essentialist
-```
-
-</p>
-</details>
-
-<details><summary>MacOS</summary>
-<p>
-
-```shell
-go install fyne.io/tools/cmd/fyne@latest
-cd cmd/essentialist
-fyne package -os darwin
-```
-
-</p>
-</details>
-
-<details><summary>Windows</summary>
-<p>
-
-```shell
-go build -x -o essentialist.exe ./cmd/essentialist
-```
-
-</p>
-</details>
-
-<details><summary>Android</summary>
-<p>
-
-1. Install the Android NDK from <https://developer.android.com/ndk/downloads>.
-   Set the `ANDROID_NDK_HOME` variable to the directory where the NDK is located.
-
-1. Build the Android APK with:
-
-  ```shell
-go install fyne.io/tools/cmd/fyne@latest
-cd cmd/essentialist
-fyne package -os android
-  ```
-
-1. Plug your phone over USB and install the APK with:
-
-  ```shell
-adb install Essentialist.apk
-  ```
-
-Use the local storage (of your Android device) to import flash cards. For
-example, you can put them in an SD card and import them from the Essentialist
-application.
-
-</p>
-</details>
-
-## Flashdown (terminal version)
-
-Flashdown is the terminal application.
-
-To install it, clone this repo and run:
-
-```shell
-go install ./cmd/flashdown
-```
-
-Usage:
-
-```shell
-flashdown [-a] [-g <algorithm>] [-n <number of cards>] <deck_file> [<deck_file> ...]
-```
-
 To force a line break in a Flashdown question, insert `<br>` (or `<br/>` or
 `<br />`) while keeping the heading on one source line:
 
@@ -195,27 +95,26 @@ adding, removing, or moving them does not change the card's hash.
 
 ![Screenshot](docs/flashdown-screenshot.png)
 
-Similar project: <https://github.com/Yvee1/hascard>.
+## Development
 
-## Maintenance
-
-### How to update dependencies
+Build and run all application and patched wrapping-library tests:
 
 ```shell
-go get -u ./...
-go mod tidy
-go run github.com/dennwc/flatpak-go-mod@latest -out cmd/essentialist/flatpak/ .
-go-licenses report ./... --template cmd/essentialist/licenses.tpl > cmd/essentialist/licenses.md
+make test
+go build ./...
 ```
 
-### How to make a new version
+Dependencies are defined in `go.mod`. Update individual dependencies as needed,
+then run `go mod tidy` and `make test`. The local `go-term-text` replacement keeps
+accented words together during wrapping; see its
+[patch notes](third_party/github.com/MichaelMure/go-term-text/PATCHES.md).
 
-A new version can be created from the [Release workflow](https://github.com/essentialist-app/essentialist/actions/workflows/release.yml).
+The Go module path remains `github.com/essentialist-app/essentialist` for existing
+internal imports.
 
-1. Go to the "Actions" tab in the GitHub repository.
-2. Select the "Create Release" workflow.
-3. Click on "Run workflow".
-4. Enter the new version number (e.g., 1.2.3) in the "Version" input field.
-5. Click on "Run workflow".
+## Releases
 
-The workflow will automatically update the version number in the files, commit the changes, build the application for all platforms, and create a new Git tag. This will trigger the release creation workflow, which will create a new release on GitHub with the build artifacts.
+The **Manual build** workflow builds Flashdown binaries for Linux, macOS, and
+Windows. To publish a release, run **Create Release** with a version such as
+`1.2.3`. It creates a `v1.2.3` tag and publishes the matching binaries. Pushing a
+`v*` tag also runs the release workflow.
