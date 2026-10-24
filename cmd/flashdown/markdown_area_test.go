@@ -27,6 +27,8 @@ func TestMarkdownAreaLineBreaks(t *testing.T) {
 		{"inline code", "Use `<br>` literally", 90, []string{"Use <br> literally"}},
 		{"escaped tag", `Use \<br> literally`, 90, []string{"Use <br> literally"}},
 		{"formatted question", "**Label**<br>*Question*", 90, []string{"Label", "Question"}},
+		{"Swedish word boundary", "En fråga kommer här", 8, []string{"En", "fråga", "kommer", "här"}},
+		{"quoted word boundary", "En ”fråga” kommer här", 10, []string{"En", "”fråga”", "kommer", "här"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

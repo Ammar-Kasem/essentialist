@@ -66,3 +66,5 @@ require (
 )
 
 replace codeberg.org/go-latex/latex => ./third_party/codeberg.org/go-latex/latex
+
+replace github.com/MichaelMure/go-term-text => ./third_party/github.com/MichaelMure/go-term-text
